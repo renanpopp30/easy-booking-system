@@ -19,7 +19,9 @@ router.post('/cadastro', async (req, res) => {
             data: {
                 email: user.email,
                 name: user.name,
+                profession: user.profession,
                 password: hashPassword,
+                slug: user.slug
             },
 
         })
@@ -42,6 +44,7 @@ router.post('/cadastro', async (req, res) => {
 
         res.status(201).json(userDB)
     } catch (err) {
+        console.log(err)
         res.status(500).json({ message: "Erro no servidor tente novamente" })
     }
 
@@ -81,5 +84,33 @@ router.post('/login', async (req, res) => {
     }
 
 })
+
+router.get('/listar', async (req, res) => {
+    try {
+        // findMany() porque quer encontrar todos/vários
+        const users = await prisma.user.findMany()
+
+        res.status(200).json({ message: 'Usuários cadastrados', users })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Falha no servidor' })
+    }
+
+})
+
+router.get('/listar-servicos', async (req, res) => {
+    try {
+        // findMany() porque quer encontrar todos/vários
+        const services = await prisma.availability.findMany()
+
+        res.status(200).json({ message: 'Serviços cadastrados', services })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Falha no servidor' })
+    }
+
+})
+
+
 
 export default router

@@ -149,10 +149,12 @@ function Perfil() {
                 
             </ul>
             <button className="w-full bg-blue-500 mt-3 text-white py-2 px-4 rounded-md hover:bg-blue-400" onClick={editUser}>Salvar Alteração</button>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-36 col-span-1 mt-2">
-                <Link to="/listar-usuarios" className="text-blue-800 hover:underline">Usuários Cadastrados</Link>
-                <Link to="/trocar-senha" className="text-blue-800 hover:underline">Trocar Senha</Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-11 col-span-1 mt-2">
+                <Link to="/listar-usuarios" className="text-blue-800 hover:underline mt-3 block text-center">Ver prestadores</Link>
+                <Link to="/create-availability" className="text-blue-800 hover:underline mt-3 block text-center">Criar Disponibilidade de serviço</Link>
             </div>
+
+            <Link to="/trocar-senha" className="text-blue-800 hover:underline mt-4 block text-center">Trocar Senha</Link>
             <Link to="/login" onClick={logout} className="text-red-400 hover:underline mt-3 block text-center">Logout</Link>
             <Link to="/login" onClick={deleteUser} className="text-red-400 hover:underline mt-3 block text-center">Deletar minha conta</Link>
         </div>

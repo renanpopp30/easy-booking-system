@@ -13,11 +13,44 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  email    String @unique
-  name     String
-  password String
-  createdAt DateTime  @default(now())
-  lastLogin DateTime?
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  email        String @unique
+  name         String
+  profession   String?
+  password     String
+  createdAt    DateTime @default(now())
+  lastLogin    DateTime?
   linkURLimage String?
+  slug         String? @unique
+  availabilities Availability[]
+  appointments  Appointment[]
+}
+
+model Availability {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  user   User @relation(fields: [userId], references: [id])
+  serviceName String
+  serviceAddress String
+  dateTime DateTime
+  horaInicio String
+  horaFim    String
+  interval   String
+  available Boolean @default(true)
+  appointments Appointment[]
+  @@index([userId])
+}
+
+model Appointment {
+  id  String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId String  @db.ObjectId
+  user   User @relation(fields: [userId], references: [id])
+  availabilityId String @db.ObjectId
+  availability Availability @relation(fields: [availabilityId], references: [id])
+  clientName  String
+  clientEmail String
+  date      DateTime
+  hour      String
+  status    String   @default("CONFIRMED")
+  createdAt DateTime @default(now())
 }

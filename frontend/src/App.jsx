@@ -4,6 +4,9 @@ import Login from "./pages/Login"
 import ListarUsuarios from "./pages/Lista"
 import Perfil from "./pages/Perfil"
 import TrocarSenhaUser from "./pages/TrocarSenhaUser"
+import CreateAvailability from "./pages/CreateAvailability"
+import ListarServicos from "./pages/ListaServicos"
+import Agendar from "./pages/Agendar"
 
 function App() {
   return (
@@ -16,7 +19,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/listar-usuarios" element={<ListarUsuarios />} />
         <Route path="/perfil" element={<Perfil />} />
-        <Route path="/trocar-senha" element={<TrocarSenhaUser />} />        
+        <Route path="/trocar-senha" element={<TrocarSenhaUser />} />
+        <Route path="/create-availability" element={<CreateAvailability />} />
+        <Route path="/listar-servicos" element={<ListarServicos />} />
+        <Route path="/agendar/:slug" element={<Agendar />} />   
       </Routes>
     </BrowserRouter>
   )

@@ -6,19 +6,6 @@ import bcrypt from 'bcrypt'
 const prisma = new PrismaClient()
 const router = express.Router()
 
-router.get('/listar', async (req, res) => {
-    try {
-        // findMany() porque quer encontrar todos/vários
-        const users = await prisma.user.findMany()
-
-        res.status(200).json({ message: 'Usuários cadastrados', users })
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({ message: 'Falha no servidor' })
-    }
-
-})
-
 router.get('/perfil/:id', async (req, res) => {
     try {
         const id = req.params.id
@@ -111,5 +98,98 @@ router.delete('/delete-user/:id', async (req, res) => {
         res.status(500).json({ message: 'Falha no servidor' })
     }
 })
+
+router.post('/create-availability/:id', async (req, res) => {
+    try {
+        const id = req.params.id
+        const infoAvailability = req.body
+        const data = {}
+        data.userId = id
+        if (infoAvailability.dateTime) data.dateTime = new Date(infoAvailability.dateTime)
+        if (infoAvailability.horaInicio) data.horaInicio = infoAvailability.horaInicio
+        if (infoAvailability.horaFim) data.horaFim = infoAvailability.horaFim
+        if (infoAvailability.interval) data.interval = infoAvailability.interval
+        if (infoAvailability.serviceName) data.serviceName = infoAvailability.serviceName
+        if (infoAvailability.serviceAddress) data.serviceAddress = infoAvailability.serviceAddress
+        const infoUser = await prisma.availability.create({
+            data
+        })
+        
+        res.status(200).json({ message: 'informações de disponibilidade salvas', infoAvailability })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Falha no servidor' })
+    }
+
+})
+
+router.get('/agendar/:slug', async (req, res) => {
+    function generateSlots(horaInicio, horaFim, interval) {
+        const slots = []
+        let [hora, minuto] = horaInicio.split(':').map(Number)
+        const [horaFinal, minutoFinal] = horaFim.split(':').map(Number)
+
+        while (hora < horaFinal || (hora === horaFinal && minuto < minutoFinal)) {
+            slots.push(
+                `${String(hora).padStart(2, '0')}:${String(minuto).padStart(2, '0')}`
+            )
+            minuto += Number(interval)
+            if (minuto >= 60) {
+                hora += Math.floor(minuto / 60)
+                minuto = minuto % 60
+            }
+        }
+        return slots
+    }
+
+    const { slug } = req.params
+    const user = await prisma.user.findUnique({
+        where: {
+            slug
+        }
+    })
+    const availabilities = await prisma.availability.findMany({
+        where: {
+            userId: user.id
+        }
+    })
+    const services = availabilities.map(service => ({
+        ...service,
+        slots: generateSlots(
+            service.horaInicio,
+            service.horaFim,
+            service.interval
+        )
+    }))
+    res.status(200).json({ user, services })
+
+})
+
+router.post('/salvar-agendamento/:id', async (req, res) => {
+    try {
+        const id = req.params.id
+        const userInfo = await prisma.user.findUnique({
+            where: { id: id },
+        })
+        const infoAvailability = req.body
+        const infoAgendamento = await prisma.appointment.create({
+            data: {
+                userId: id,
+                availabilityId: infoAvailability.availabilityId,
+                clientName: userInfo.name,
+                clientEmail: userInfo.email,
+                date: infoAvailability.date,
+                hour: infoAvailability.hour
+            }
+        })
+        
+        res.status(200).json({ message: 'Agendamento concluído', infoAgendamento })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Falha no servidor' })
+    }
+
+})
+
 
 export default router
