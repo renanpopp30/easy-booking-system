@@ -161,7 +161,9 @@ router.get('/agendar/:slug', async (req, res) => {
             service.interval
         )
     }))
-    res.status(200).json({ user, services })
+    const appointments = await prisma.appointment.findMany()
+
+    res.status(200).json({ user, services, appointments })
 
 })
 
@@ -184,6 +186,24 @@ router.post('/salvar-agendamento/:id', async (req, res) => {
         })
         
         res.status(200).json({ message: 'Agendamento concluído', infoAgendamento })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Falha no servidor' })
+    }
+
+})
+
+router.get('/painel-agendamentos-servicos/:id', async (req, res) => {
+    try {
+        const id = req.params.id
+        const appointments = await prisma.appointment.findMany({
+            where: { userId: id },
+        })
+        const availabilitys = await prisma.availability.findMany({
+            where: { userId: id }
+        })
+
+        res.status(200).json({ appointments, availabilitys })
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: 'Falha no servidor' })

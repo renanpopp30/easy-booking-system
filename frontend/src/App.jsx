@@ -7,22 +7,23 @@ import TrocarSenhaUser from "./pages/TrocarSenhaUser"
 import CreateAvailability from "./pages/CreateAvailability"
 import ListarServicos from "./pages/ListaServicos"
 import Agendar from "./pages/Agendar"
-
+import PainelAgendamentosServicos from "./pages/PainelAgendamentosServicos"
 function App() {
   return (
     <BrowserRouter>
     <header className="bg-blue-600 text-white p-4 shadow-lg">
-      <h1 className="text-2xl font-extrabold text-center">Sistema de Cadastro de Usuários</h1>
+      <h1 className="text-2xl font-extrabold text-center">Easy Booking System</h1>
     </header>
       <Routes>
-        <Route path="/" element={<Cadastro />} />
+        <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/listar-usuarios" element={<ListarUsuarios />} />
+        <Route path="/" element={<ListarUsuarios />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/trocar-senha" element={<TrocarSenhaUser />} />
         <Route path="/create-availability" element={<CreateAvailability />} />
         <Route path="/listar-servicos" element={<ListarServicos />} />
-        <Route path="/agendar/:slug" element={<Agendar />} />   
+        <Route path="/agendar/:slug" element={<Agendar />} />
+        <Route path="/painel-agendamentos-servicos" element={<PainelAgendamentosServicos />} />
       </Routes>
     </BrowserRouter>
   )

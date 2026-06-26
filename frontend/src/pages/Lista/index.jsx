@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom"
 function ListarUsuarios() {
     const navigate = useNavigate()
     const [allUsers, setAllUsers] = useState([])
+    const token = localStorage.getItem('token')
     // useEffect é chamado toda vez que a tela carrega
     useEffect(() => {
         const token = localStorage.getItem('token')
@@ -22,7 +23,10 @@ function ListarUsuarios() {
     return (
         <div className="max-w-lg mx-auto mt-10 bg-white p-8 border border-gray-300 rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold m-1 text-center text-gray-800">Prestadores de Serviço</h2>
-            <Link to="/perfil" className="text-blue-800 hover:underline mt-1 block text-center">Voltar</Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-11 col-span-1 mt-2">
+                <Link to="/listar-usuarios" className={`text-blue-800 hover:underline mt-3 block text-center ${token ? 'hidden' : ''}`}>Cadastrar-se</Link>
+                <Link to="/perfil" className="text-blue-800 hover:underline mt-3 block text-center">Meu perfil</Link>
+            </div>
             <ul className="space-y-2">
                 {/*allUsers && é como se fosse um if ex: if(allUsers){...}  */}
                 {allUsers && allUsers.length > 0 && allUsers.map((user) => (

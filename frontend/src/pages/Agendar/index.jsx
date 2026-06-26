@@ -4,20 +4,22 @@ import { Link, useNavigate, useParams } from "react-router-dom"
 
 function Agendar() {
     const [allAvailabilities, setAllAvailabilities] = useState([])
+    const [allAppointments, setAllAppointments] = useState([])
     const { slug } = useParams()
     const token = localStorage.getItem('token')
     const id = localStorage.getItem('id')
     async function loadAvailabilities() {
         try {
-            const { data: { services } } = await api.get(`/agendar/${slug}`, {
+            const { data: { services, appointments } } = await api.get(`/agendar/${slug}`, {
                 // Minha api recebe o token pelo req.headers.authorization
                 headers: { Authorization: `Bearer ${token}` }
             })
             setAllAvailabilities(services)
+            setAllAppointments(appointments)
         } catch (erro) {
             console.log(err)
         }
-        
+
     }
     // useEffect é chamado toda vez que a tela carrega
     // e puxa os dados do usuario
@@ -30,7 +32,7 @@ function Agendar() {
                 alert("Erro ao acessar a página")
                 console.log(error)
             }
-        }else {
+        } else {
             loadAvailabilities()
         }
     }, [])
@@ -55,6 +57,7 @@ function Agendar() {
     return (
         <div className="max-w-lg mx-auto mt-10 bg-white p-8 border border-gray-300 rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold m-6 text-center text-gray-800">Lista de Disponibilidade de Serviços</h2>
+            <Link to="/" className="text-blue-800 hover:underline mt-4 block text-center">Voltar</Link>
             <ul className="space-y-2">
                 {allAvailabilities && allAvailabilities.length > 0 && allAvailabilities.map((availabilitie) => (
                     <li key={availabilitie.id} className="bg-gray-100 p-4 rounded-lg">
@@ -66,17 +69,26 @@ function Agendar() {
                         <p>Duração do atendimento: {availabilitie.interval}</p>
                         <p className="font-bold">Horários Disponiveis:</p>
                         <ul className="grid grid-cols-4 gap-2 text-gray-500">
-                            {availabilitie.slots.map((slot, slotIndex) => (
-                                <li key={slotIndex}>
-                                    <button className="w-full bg-blue-500 mt-3 text-white py-2 px-4 rounded-md hover:bg-blue-400" onClick={() => salvarAgendamento(slot, availabilitie.id, availabilitie.dateTime)}>{slot}</button>
-                                    {/* <a className="hover:text-gray-900 cursor-pointer"></a> */}
-                                </li>
-                            ))}
+                            {availabilitie.slots.map((slot, slotIndex) => {
+                                const horarioOcupado = allAppointments.some(appointment => appointment.hour === slot && appointment.availabilityId === availabilitie.id)
+                                return (
+                                    <li key={slotIndex}>
+                                        <button
+                                            disabled={horarioOcupado}
+                                            className={`w-full mt-3 text-white py-2 px-4 rounded-md ${horarioOcupado ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-400'
+                                                }`}
+                                            onClick={() => salvarAgendamento(slot, availabilitie.id, availabilitie.dateTime)}
+                                        >
+                                            {slot}
+                                        </button>
+                                    </li>
+                                )
+                            })}
                         </ul>
                     </li>
                 ))}
             </ul>
-            <Link to="/listar-usuarios" className="text-blue-800 hover:underline mt-4 block text-center">Voltar</Link>
+            
         </div>
 
     )

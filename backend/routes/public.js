@@ -112,5 +112,4 @@ router.get('/listar-servicos', async (req, res) => {
 })
 
 
-
 export default router
